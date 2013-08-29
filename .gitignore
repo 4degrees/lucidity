@@ -1,0 +1,15 @@
+# General
+*.py[cod]
+
+# Development
+.project
+.pydevproject
+.settings
+
+# Build
+build/
+dist/
+
+# Testing
+.coverage
+
