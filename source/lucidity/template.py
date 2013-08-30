@@ -2,6 +2,8 @@
 # :copyright: Copyright (c) 2013 Martin Pengelly-Phillips
 # :license: See LICENSE.txt.
 
+import sys
+
 import regex as _regex
 import bunch
 
@@ -88,7 +90,9 @@ class Template(object):
                 raise ValueError('Placeholder name contains invalid '
                                  'characters.')
             else:
-                raise
+                type, value, traceback = sys.exc_info()
+                message = 'Invalid pattern: {0}'.format(value)
+                raise ValueError, message, traceback
 
         return compiled
 
