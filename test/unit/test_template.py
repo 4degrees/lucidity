@@ -27,10 +27,11 @@ def test_valid_pattern(pattern):
 
 @pytest.mark.parametrize('pattern', [
     '{}',
-    '{variable-dashed}'
+    '{variable-dashed}',
+    '{variable:(?P<missing_closing_angle_bracket)}'
 ], ids=[
     'empty placeholder',
-    'invalid placeholder character'
+    'invalid placeholder character', 'as'
 ])
 def test_invalid_pattern(pattern):
     '''Construct template with invalid pattern.'''
@@ -100,3 +101,9 @@ def test_format(pattern, input, expected):
     template = Template('test', pattern)
     formatted = template.format(input)
     assert formatted == expected
+
+
+def test_repr():
+    '''Represent template.'''
+    assert (repr(Template('test', '/foo/{bar}/{baz:\d+}'))
+            == 'Template(name=\'test\', pattern=\'/foo/{bar}/{baz:\\\d+}\')')
