@@ -2,5 +2,3 @@
 # :copyright: Copyright (c) 2013 Martin Pengelly-Phillips
 # :license: See LICENSE.txt.
 
-from .template import Template
-
