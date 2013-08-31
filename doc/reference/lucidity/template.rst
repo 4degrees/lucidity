@@ -2,13 +2,8 @@
     :copyright: Copyright (c) 2013 Martin Pengelly-Phillips
     :license: See LICENSE.txt.
 
-:mod:`lucidity`
-===============
+:mod:`~lucidity.template`
+-------------------------
 
-.. automodule:: lucidity
-
-.. toctree::
-    :glob:
-
-    template
+.. automodule:: lucidity.template
 

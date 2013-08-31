@@ -11,3 +11,6 @@ Overview and examples of using the system in practice.
 .. toctree::
     :maxdepth: 1
 
+    introduction
+    installation
+    tutorial
