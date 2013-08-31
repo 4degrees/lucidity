@@ -13,10 +13,11 @@ class Template(object):
 
     _STRIP_EXPRESSION_REGEX = _regex.compile(r'{(.*?)(:(\\}|.)+?)}')
 
-    def __init__(self, name, pattern):
+    def __init__(self, name, pattern,
+                 default_placeholder_expression='[\w_.\-]+?'):
         '''Initialise with *name* and *pattern*.'''
         super(Template, self).__init__()
-        self.default_group_expression = '[\w_.\-]+?'
+        self._default_placeholder_expression = default_placeholder_expression
         self._period_code = '_LPD_'
         self._name = name
         self._pattern = pattern
@@ -110,7 +111,7 @@ class Template(object):
 
         expression = match.group('expression')
         if expression is None:
-            expression = self.default_group_expression
+            expression = self._default_placeholder_expression
 
         # Un-escape potentially escaped characters in expression.
         expression = expression.replace('\{', '{').replace('\}', '}')
