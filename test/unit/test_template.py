@@ -5,6 +5,7 @@
 import pytest
 
 from lucidity import Template
+from lucidity.error import ParseError, FormatError
 
 
 @pytest.mark.parametrize('pattern', [
@@ -76,8 +77,8 @@ def test_matching_parse(pattern, input, expected):
 def test_non_matching_parse(pattern, input):
     '''Extract data from non-matching input.'''
     template = Template('test', pattern)
-    data = template.parse(input)
-    assert data is None
+    with pytest.raises(ParseError):
+        data = template.parse(input)
 
 
 @pytest.mark.parametrize(('pattern', 'input', 'expected'), [

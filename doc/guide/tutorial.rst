@@ -71,11 +71,12 @@ With a template defined we can now parse a path and extract data from it::
     ``{asset_name}`` and ``{lod}`` above), the last matching value is used for 
     the returned data.
 
-If a template's pattern does not match the full path exactly then the result
-of a :py:meth:`~lucidity.template.Template.parse` will be `None`::
+If a template's pattern does not match the full path exactly then
+:py:meth:`~lucidity.template.Template.parse` will raise a
+:py:class:`~lucidity.error.ParseError`::
 
     >>> print template.parse('/jobs/monty/assets')
-    None
+    ParseError: Input '/jobs/monty/assets' did not match template pattern.
     
 Constructing A Path From Data
 -----------------------------
@@ -93,11 +94,17 @@ produce a path::
     >>> path = template.format(data)
     >>> print path
     /jobs/monty/assets/circus/model/high/circus_high_v001.abc
-    
+
 In the example above, we haven't done more than could be achieved with standard
 Python string formatting. In the next sections, though, you will see the need
 for a dedicated :py:meth:`~lucidity.template.Template.format` method.
 
+If the supplied data does not contain enough information to fill the template
+completely a :py:class:`~lucidity.error.FormatError` will be raised::
+
+    >>> print template.format({})
+    FormatError: Could not format data {} due to missing key 'job'.
+    
 Nested Data Structures
 ----------------------
 

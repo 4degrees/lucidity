@@ -7,6 +7,8 @@ import sys
 import regex as _regex
 import bunch
 
+import lucidity.error
+
 
 class Template(object):
     '''A template.'''
@@ -43,7 +45,8 @@ class Template(object):
     def parse(self, input):
         '''Return dictionary of data extracted from *input* using this template.
 
-        Return None if *input* is not parseable by this template.
+        Raise :py:class:`~lucidity.error.ParseError` if *input* is not
+        parseable by this template.
 
         '''
         match = self._regex.fullmatch(input)
@@ -60,18 +63,29 @@ class Template(object):
                 target[parts[-1]] = value
 
             return data
+
         else:
-            return None
+            raise lucidity.error.ParseError(
+                'Input {0!r} did not match template pattern.'.format(input)
+            )
 
     def format(self, data):
-        '''Return a string formatted by applying *data* to this template.
+        '''Return a path formatted by applying *data* to this template.
 
-        Raise KeyError if *data* does not supply enough information to fill
-        the template fields.
+        Raise :py:class:`~lucidity.error.FormatError` if *data* does not
+        supply enough information to fill the template fields.
 
         '''
         bunchified = bunch.bunchify(data)
-        return self._format.format(**bunchified)
+        try:
+            path = self._format.format(**bunchified)
+        except KeyError as error:
+            raise lucidity.error.FormatError(
+                'Could not format data {0!r} due to missing key {1!r}.'
+                .format(data, error.args[0])
+            )
+        else:
+            return path
 
     def _construct_format_expression(self, pattern):
         '''Return format expression from *pattern*.'''
