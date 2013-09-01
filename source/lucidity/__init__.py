@@ -70,8 +70,11 @@ def parse(path, templates):
 
     '''
     for template in templates:
-        data = template.parse(path)
-        if data is not None:
+        try:
+            data = template.parse(path)
+        except ParseError:
+            continue
+        else:
             return (data, template)
 
     raise ParseError(
@@ -98,7 +101,7 @@ def format(data, templates):  # @ReservedAssignment
     for template in templates:
         try:
             path = template.format(data)
-        except KeyError:
+        except FormatError:
             continue
         else:
             return (path, template)
