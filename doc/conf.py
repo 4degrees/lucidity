@@ -4,6 +4,9 @@
 
 '''Lucidity documentation build configuration file'''
 
+import os
+import re
+
 # -- General ------------------------------------------------------------------
 
 # Extensions
@@ -25,8 +28,17 @@ project = u'Lucidity'
 copyright = u'2013, Martin Pengelly-Phillips'
 
 # Version
-version = '?.?'
-release = '?.?.?'
+with open(
+    os.path.join(
+        os.path.dirname(__file__), '..', 'source', 'lucidity', '_version.py'
+    )
+) as _version_file:
+    _version = re.match(
+        r'.*__version__ = \'(.*?)\'', _version_file.read(), re.DOTALL
+    ).group(1)
+
+version = _version
+release = _version
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.

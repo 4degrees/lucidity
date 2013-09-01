@@ -6,6 +6,7 @@ import os
 import uuid
 import imp
 
+from ._version import __version__
 from .template import Template
 from .error import ParseError, FormatError
 
