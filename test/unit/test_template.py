@@ -104,6 +104,20 @@ def test_format(pattern, input, expected):
     assert formatted == expected
 
 
+@pytest.mark.parametrize(('pattern', 'input'), [
+    ('/single/{variable}', {}),
+    ('/{variable_a}/{variable_b}', {'variable_a': 'value'})
+], ids=[
+    'missing single variable',
+    'partial data'
+])
+def test_format_failure(pattern, input):
+    '''Format incomplete input against pattern.'''
+    template = Template('test', pattern)
+    with pytest.raises(FormatError):
+        template.format(input)
+
+
 def test_repr():
     '''Represent template.'''
     assert (repr(Template('test', '/foo/{bar}/{baz:\d+}'))
