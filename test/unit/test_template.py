@@ -40,7 +40,7 @@ def test_invalid_pattern(pattern):
         Template('test', pattern)
 
 
-@pytest.mark.parametrize(('pattern', 'input', 'expected'), [
+@pytest.mark.parametrize(('pattern', 'path', 'expected'), [
     ('/static/string', '/static/string', {}),
     ('/single/{variable}', '/single/value', {'variable': 'value'}),
     ('/{variable}/{variable}', '/first/second', {'variable': 'second'}),
@@ -56,14 +56,14 @@ def test_invalid_pattern(pattern):
     'mix of static and variables',
     'structured placeholders'
 ])
-def test_matching_parse(pattern, input, expected):
-    '''Extract data from matching input.'''
+def test_matching_parse(pattern, path, expected):
+    '''Extract data from matching path.'''
     template = Template('test', pattern)
-    data = template.parse(input)
+    data = template.parse(path)
     assert data == expected
 
 
-@pytest.mark.parametrize(('pattern', 'input'), [
+@pytest.mark.parametrize(('pattern', 'path'), [
     ('/static/string', '/static/string/'),
     ('/static/string', '/static/'),
     ('/single/{variable}', '/static/'),
@@ -74,14 +74,14 @@ def test_matching_parse(pattern, input, expected):
     'missing variable',
     'mismatching custom expression'
 ])
-def test_non_matching_parse(pattern, input):
-    '''Extract data from non-matching input.'''
+def test_non_matching_parse(pattern, path):
+    '''Extract data from non-matching path.'''
     template = Template('test', pattern)
     with pytest.raises(ParseError):
-        data = template.parse(input)
+        data = template.parse(path)
 
 
-@pytest.mark.parametrize(('pattern', 'input', 'expected'), [
+@pytest.mark.parametrize(('pattern', 'data', 'expected'), [
     ('/static/string', {}, '/static/string'),
     ('/single/{variable}', {'variable': 'value'}, '/single/value'),
     ('/{variable}/{variable}', {'variable': 'value'}, '/value/value'),
@@ -97,25 +97,25 @@ def test_non_matching_parse(pattern, input):
     'mix of static and variables',
     'structured placeholders'
 ])
-def test_format(pattern, input, expected):
-    '''Format input against pattern.'''
+def test_format(pattern, data, expected):
+    '''Format data against pattern.'''
     template = Template('test', pattern)
-    formatted = template.format(input)
+    formatted = template.format(data)
     assert formatted == expected
 
 
-@pytest.mark.parametrize(('pattern', 'input'), [
+@pytest.mark.parametrize(('pattern', 'data'), [
     ('/single/{variable}', {}),
     ('/{variable_a}/{variable_b}', {'variable_a': 'value'})
 ], ids=[
     'missing single variable',
     'partial data'
 ])
-def test_format_failure(pattern, input):
-    '''Format incomplete input against pattern.'''
+def test_format_failure(pattern, data):
+    '''Format incomplete data against pattern.'''
     template = Template('test', pattern)
     with pytest.raises(FormatError):
-        template.format(input)
+        template.format(data)
 
 
 def test_repr():

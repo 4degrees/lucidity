@@ -42,14 +42,14 @@ class Template(object):
         '''Return template pattern.'''
         return self._pattern
 
-    def parse(self, input):
-        '''Return dictionary of data extracted from *input* using this template.
+    def parse(self, path):
+        '''Return dictionary of data extracted from *path* using this template.
 
-        Raise :py:class:`~lucidity.error.ParseError` if *input* is not
+        Raise :py:class:`~lucidity.error.ParseError` if *path* is not
         parseable by this template.
 
         '''
-        match = self._regex.fullmatch(input)
+        match = self._regex.fullmatch(path)
         if match:
             data = {}
             for key, value in match.groupdict().items():
@@ -66,7 +66,7 @@ class Template(object):
 
         else:
             raise lucidity.error.ParseError(
-                'Input {0!r} did not match template pattern.'.format(input)
+                'Path {0!r} did not match template pattern.'.format(path)
             )
 
     def format(self, data):
