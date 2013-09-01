@@ -5,6 +5,12 @@ Lucidity
 A framework for managing filesystem structure using templates.
 
 *************
+Documentation
+*************
+
+Full documentation can be found at http://lucidity.readthedocs.org
+
+*************
 Issue tracker
 *************
 
