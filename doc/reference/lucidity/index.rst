@@ -11,4 +11,5 @@
     :glob:
 
     template
+    error
 
