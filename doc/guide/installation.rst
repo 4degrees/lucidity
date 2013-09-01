@@ -38,8 +38,14 @@ Dependencies
 -------------
 
 * `Python <http://python.org>`_ >= 2.6, < 3
-* `Regex <https://code.google.com/p/mrab-regex-hg>`_ >= 2.4.26
 * `Bunch <https://github.com/dsc/bunch>`_ >= 1.0.1
+* `Regex <https://code.google.com/p/mrab-regex-hg>`_ >= 2.4.26
+
+    .. note::
+
+        If you are having trouble installing Regex via Pip you might want to
+        install the pre-built extension from
+        http://www.lfd.uci.edu/~gohlke/pythonlibs/
 
 For testing:
 
