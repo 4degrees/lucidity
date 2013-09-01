@@ -105,9 +105,9 @@ class Template(object):
                 raise ValueError('Placeholder name contains invalid '
                                  'characters.')
             else:
-                type, value, traceback = sys.exc_info()
+                _, value, traceback = sys.exc_info()
                 message = 'Invalid pattern: {0}'.format(value)
-                raise ValueError, message, traceback
+                raise ValueError, message, traceback  #@IgnorePep8
 
         return compiled
 
