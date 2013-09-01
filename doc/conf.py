@@ -69,6 +69,7 @@ html_copy_source = True
 # -- Autodoc ------------------------------------------------------------------
 
 autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
+autodoc_member_order = 'bysource'
 
 def autodoc_skip(app, what, name, obj, skip, options):
     '''Don't skip __init__ method for autodoc.'''
