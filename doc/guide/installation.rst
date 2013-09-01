@@ -39,6 +39,7 @@ Dependencies
 
 * `Python <http://python.org>`_ >= 2.6, < 3
 * `Regex <https://code.google.com/p/mrab-regex-hg>`_ >= 2.4.26
+* `Bunch <https://github.com/dsc/bunch>`_ >= 1.0.1
 
 For testing:
 
