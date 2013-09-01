@@ -9,7 +9,7 @@ Reference
 API reference providing details on the actual code.
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
 
     lucidity/index
 
