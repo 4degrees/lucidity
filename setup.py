@@ -40,9 +40,6 @@ setup(
     version=_version,
     description='Filesystem templating and management.',
     long_description=open('README.rst').read(),
-    classifiers=[
-        'Development Status :: 4 - Beta',
-    ],
     keywords='filesystem, management, templating',
     url='https://github.com/4degrees/lucidity',
     author='Martin Pengelly-Phillips',
