@@ -7,6 +7,7 @@ import uuid
 import imp
 
 from .template import Template
+from .error import ParseError, FormatError
 
 
 def discover_templates(paths=None, recursive=True):
@@ -51,4 +52,58 @@ def discover_templates(paths=None, recursive=True):
                 del directories[:]
 
     return templates
+
+
+def parse(path, templates):
+    '''Parse *path* against *templates*.
+
+    *path* should be a string to parse.
+
+    *templates* should be a list of :py:class:`~lucidity.template.Template`
+    instances in the order that they should be tried.
+
+    Return ``(data, template)`` from first successful parse.
+
+    Raise :py:class:`~lucidity.error.ParseError` if *path* is not
+    parseable by any of the supplied *templates*.
+
+    '''
+    for template in templates:
+        data = template.parse(path)
+        if data is not None:
+            return (data, template)
+
+    raise ParseError(
+        'Path {0!r} did not match any of the supplied template patterns.'
+        .format(path)
+    )
+
+
+def format(data, templates):  # @ReservedAssignment
+    '''Format *data* using *templates*.
+
+    *data* should be a dictionary of data to format into a path.
+
+    *templates* should be a list of :py:class:`~lucidity.template.Template`
+    instances in the order that they should be tried.
+
+    Return ``(path, template)`` from first successful format.
+
+    Raise :py:class:`~lucidity.error.FormatError` if *data* is not
+    formattable by any of the supplied *templates*.
+
+
+    '''
+    for template in templates:
+        try:
+            path = template.format(data)
+        except KeyError:
+            continue
+        else:
+            return (path, template)
+
+    raise FormatError(
+        'Data {0!r} was not formattable by any of the supplied templates.'
+        .format(data)
+    )
 
