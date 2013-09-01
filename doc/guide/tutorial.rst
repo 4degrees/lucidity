@@ -49,8 +49,8 @@ Now, construct a template with the pattern above::
     The template must be given a name to identify it. The name becomes useful
     when you have a bunch of templates to manage.
 
-Extracting Data From A Path
----------------------------
+Parsing
+-------
 
 With a template defined we can now parse a path and extract data from it::
 
@@ -78,8 +78,8 @@ If a template's pattern does not match the full path exactly then
     >>> print template.parse('/jobs/monty/assets')
     ParseError: Input '/jobs/monty/assets' did not match template pattern.
     
-Constructing A Path From Data
------------------------------
+Formatting
+----------
 
 It is also possible to pass a dictionary of data to a template in order to
 produce a path::
