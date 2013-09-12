@@ -81,6 +81,40 @@ def test_non_matching_parse(pattern, path):
         data = template.parse(path)
 
 
+@pytest.mark.parametrize(('path', 'anchor', 'expected'), [
+    ('/static/value/extra', Template.ANCHOR_START, True),
+    ('/static/', Template.ANCHOR_START, False),
+    ('/extra/static/value', Template.ANCHOR_END, True),
+    ('/static/value/extra', Template.ANCHOR_END, False),
+    ('/static/value', Template.ANCHOR_START | Template.ANCHOR_END, True),
+    ('extra/static/value', Template.ANCHOR_START | Template.ANCHOR_END, False),
+    ('/static/value/extra', Template.ANCHOR_START | Template.ANCHOR_END, False),
+    ('extra/static/value/extra', None, True),
+    ('extra/non/matching/extra', None, False)
+], ids=[
+    'anchor_start:matching string',
+    'anchor_start:non-matching string',
+    'anchor_end:matching string',
+    'anchor_end:non-matching string',
+    'anchor_both:matching string',
+    'anchor_both:non-matching string prefix',
+    'anchor_both:non-matching string suffix',
+    'anchor_none:matching string',
+    'anchor_none:non-matching string'
+])
+def test_anchor(path, anchor, expected):
+    '''Parse path with specific anchor setting.'''
+    pattern = '/static/{variable}'
+    template = Template('test', pattern, anchor=anchor)
+
+    if not expected:
+        with pytest.raises(ParseError):
+            template.parse(path)
+    else:
+        data = template.parse(path)
+        assert data == {'variable': 'value'}
+
+
 @pytest.mark.parametrize(('pattern', 'data', 'expected'), [
     ('/static/string', {}, '/static/string'),
     ('/single/{variable}', {'variable': 'value'}, '/single/value'),
