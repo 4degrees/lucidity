@@ -122,3 +122,11 @@ def test_repr():
     '''Represent template.'''
     assert (repr(Template('test', '/foo/{bar}/{baz:\d+}'))
             == 'Template(name=\'test\', pattern=\'/foo/{bar}/{baz:\\\d+}\')')
+
+
+def test_escaping_pattern():
+    '''Escape regex components in pattern.'''
+    template = Template('test', '{filename}.{index}.{ext}')
+    expected = {'filename': 'filename', 'index': '0001', 'ext': 'ext'}
+    assert template.parse('filename.0001.ext') == expected
+
