@@ -126,7 +126,7 @@ def test_repr():
 
 def test_escaping_pattern():
     '''Escape regex components in pattern.'''
-    template = Template('test', '{filename}.{index}.{ext}')
+    template = Template('test', '{filename}.{index:\d\\{4\\}}.{ext}')
     expected = {'filename': 'filename', 'index': '0001', 'ext': 'ext'}
     assert template.parse('filename.0001.ext') == expected
 

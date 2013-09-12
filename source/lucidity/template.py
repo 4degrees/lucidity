@@ -13,7 +13,7 @@ import lucidity.error
 class Template(object):
     '''A template.'''
 
-    _STRIP_EXPRESSION_REGEX = _regex.compile(r'{(.*?)(:(\\}|.)+?)}')
+    _STRIP_EXPRESSION_REGEX = _regex.compile(r'{(.+?)(:(\\}|.)+?)}')
 
     def __init__(self, name, pattern,
                  default_placeholder_expression='[\w_.\-]+?'):
@@ -93,11 +93,21 @@ class Template(object):
 
     def _construct_regular_expression(self, pattern):
         '''Return a regular expression to represent *pattern*.'''
+        # Escape non-placeholder components.
         expression = _regex.sub(
-            r'{(?P<placeholder>.*?)(:(?P<expression>(\\}|.)+?))?}',
-            self._convert,
+            r'(?P<placeholder>{(.+?)(:(\\}|.)+?)?})|(?P<other>.+?)',
+            self._escape,
             pattern
         )
+
+        # Replace placeholders with regex pattern.
+        expression = _regex.sub(
+            r'{(?P<placeholder>.+?)(:(?P<expression>(\\}|.)+?))?}',
+            self._convert,
+            expression
+        )
+
+        # Compile expression.
         try:
             compiled = _regex.compile(expression)
         except _regex._regex_core.error as error:
@@ -131,4 +141,12 @@ class Template(object):
         expression = expression.replace('\{', '{').replace('\}', '}')
 
         return r'(?P<{0}>{1})'.format(placeholder_name, expression)
+
+    def _escape(self, match):
+        '''Escape matched 'other' group value.'''
+        groups = match.groupdict()
+        if groups['other'] is not None:
+            return _regex.escape(groups['other'])
+
+        return groups['placeholder']
 
