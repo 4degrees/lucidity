@@ -15,7 +15,7 @@ class Template(object):
 
     _STRIP_EXPRESSION_REGEX = _regex.compile(r'{(.*?)(:(\\}|.)+?)}')
 
-    ANCHOR_START, ANCHOR_END = (1, 2)
+    ANCHOR_START, ANCHOR_END, ANCHOR_BOTH = (1, 2, 3)
 
     def __init__(self, name, pattern, anchor=ANCHOR_START,
                  default_placeholder_expression='[\w_.\-]+'):
@@ -25,12 +25,8 @@ class Template(object):
         value of :attr:`~Template.ANCHOR_START` (the default) will match the
         pattern against the start of a path. :attr:`~Template.ANCHOR_END` will
         match against the end of a path. To anchor at both the start and end
-        (a full path match) use::
-
-            Template.ANCHOR_START | Template.ANCHOR_END
-
-        Finally, ``None`` will try to match the pattern once anywhere in the
-        path.
+        (a full path match) use :attr:`~Template.ANCHOR_BOTH`. Finally,
+        ``None`` will try to match the pattern once anywhere in the path.
 
         '''
         super(Template, self).__init__()

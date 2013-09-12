@@ -86,9 +86,9 @@ def test_non_matching_parse(pattern, path):
     ('/static/', Template.ANCHOR_START, False),
     ('/extra/static/value', Template.ANCHOR_END, True),
     ('/static/value/extra', Template.ANCHOR_END, False),
-    ('/static/value', Template.ANCHOR_START | Template.ANCHOR_END, True),
-    ('extra/static/value', Template.ANCHOR_START | Template.ANCHOR_END, False),
-    ('/static/value/extra', Template.ANCHOR_START | Template.ANCHOR_END, False),
+    ('/static/value', Template.ANCHOR_BOTH, True),
+    ('extra/static/value', Template.ANCHOR_BOTH, False),
+    ('/static/value/extra', Template.ANCHOR_BOTH, False),
     ('extra/static/value/extra', None, True),
     ('extra/non/matching/extra', None, False)
 ], ids=[
