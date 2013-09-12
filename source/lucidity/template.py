@@ -115,11 +115,12 @@ class Template(object):
             pattern
         )
 
-        if bool(self._anchor & self.ANCHOR_START):
-            expression = '^{0}'.format(expression)
+        if self._anchor is not None:
+            if bool(self._anchor & self.ANCHOR_START):
+                expression = '^{0}'.format(expression)
 
-        if bool(self._anchor & self.ANCHOR_END):
-            expression = '{0}$'.format(expression)
+            if bool(self._anchor & self.ANCHOR_END):
+                expression = '{0}$'.format(expression)
 
         try:
             compiled = _regex.compile(expression)
