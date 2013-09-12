@@ -64,12 +64,10 @@ def test_matching_parse(pattern, path, expected):
 
 
 @pytest.mark.parametrize(('pattern', 'path'), [
-    ('/static/string', '/static/string/'),
     ('/static/string', '/static/'),
     ('/single/{variable}', '/static/'),
     ('/static/{variable:\d+}', '/static/foo')
 ], ids=[
-    'string too long',
     'string too short',
     'missing variable',
     'mismatching custom expression'
