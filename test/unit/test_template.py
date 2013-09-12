@@ -48,13 +48,15 @@ def test_invalid_pattern(pattern):
     ('/{a}/static/{b}', '/first/static/second', {'a': 'first', 'b': 'second'}),
     ('/{a.b.c}/static/{a.b.d}', '/first/static/second',
      {'a': {'b': {'c': 'first', 'd': 'second'}}}),
+    ('/{a}_{b}', '/first_second', {'a': 'first', 'b': 'second'})
 ], ids=[
     'static string',
     'single variable',
     'duplicate variable',
     'custom variable expression',
     'mix of static and variables',
-    'structured placeholders'
+    'structured placeholders',
+    'neighbouring variables'
 ])
 def test_matching_parse(pattern, path, expected):
     '''Extract data from matching path.'''

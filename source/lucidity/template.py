@@ -18,7 +18,7 @@ class Template(object):
     ANCHOR_START, ANCHOR_END = (1, 2)
 
     def __init__(self, name, pattern, anchor=ANCHOR_START,
-                 default_placeholder_expression='[\w_.\-]+?'):
+                 default_placeholder_expression='[\w_.\-]+'):
         '''Initialise with *name* and *pattern*.
 
         *anchor* determines how the pattern is anchored during a parse. A
