@@ -15,14 +15,26 @@ class Template(object):
 
     _STRIP_EXPRESSION_REGEX = _regex.compile(r'{(.+?)(:(\\}|.)+?)}')
 
-    def __init__(self, name, pattern,
-                 default_placeholder_expression='[\w_.\-]+?'):
-        '''Initialise with *name* and *pattern*.'''
+    ANCHOR_START, ANCHOR_END, ANCHOR_BOTH = (1, 2, 3)
+
+    def __init__(self, name, pattern, anchor=ANCHOR_START,
+                 default_placeholder_expression='[\w_.\-]+'):
+        '''Initialise with *name* and *pattern*.
+
+        *anchor* determines how the pattern is anchored during a parse. A
+        value of :attr:`~Template.ANCHOR_START` (the default) will match the
+        pattern against the start of a path. :attr:`~Template.ANCHOR_END` will
+        match against the end of a path. To anchor at both the start and end
+        (a full path match) use :attr:`~Template.ANCHOR_BOTH`. Finally,
+        ``None`` will try to match the pattern once anywhere in the path.
+
+        '''
         super(Template, self).__init__()
         self._default_placeholder_expression = default_placeholder_expression
         self._period_code = '_LPD_'
         self._name = name
         self._pattern = pattern
+        self._anchor = anchor
         self._regex = self._construct_regular_expression(self.pattern)
         self._format = self._construct_format_expression(self.pattern)
 
@@ -49,7 +61,7 @@ class Template(object):
         parseable by this template.
 
         '''
-        match = self._regex.fullmatch(path)
+        match = self._regex.search(path)
         if match:
             data = {}
             for key, value in match.groupdict().items():
@@ -106,6 +118,13 @@ class Template(object):
             self._convert,
             expression
         )
+
+        if self._anchor is not None:
+            if bool(self._anchor & self.ANCHOR_START):
+                expression = '^{0}'.format(expression)
+
+            if bool(self._anchor & self.ANCHOR_END):
+                expression = '{0}$'.format(expression)
 
         # Compile expression.
         try:
