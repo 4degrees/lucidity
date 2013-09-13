@@ -13,7 +13,7 @@ import lucidity.error
 class Template(object):
     '''A template.'''
 
-    _STRIP_EXPRESSION_REGEX = _regex.compile(r'{(.*?)(:(\\}|.)+?)}')
+    _STRIP_EXPRESSION_REGEX = _regex.compile(r'{(.+?)(:(\\}|.)+?)}')
 
     ANCHOR_START, ANCHOR_END, ANCHOR_BOTH = (1, 2, 3)
 
@@ -105,10 +105,18 @@ class Template(object):
 
     def _construct_regular_expression(self, pattern):
         '''Return a regular expression to represent *pattern*.'''
+        # Escape non-placeholder components.
         expression = _regex.sub(
-            r'{(?P<placeholder>.*?)(:(?P<expression>(\\}|.)+?))?}',
-            self._convert,
+            r'(?P<placeholder>{(.+?)(:(\\}|.)+?)?})|(?P<other>.+?)',
+            self._escape,
             pattern
+        )
+
+        # Replace placeholders with regex pattern.
+        expression = _regex.sub(
+            r'{(?P<placeholder>.+?)(:(?P<expression>(\\}|.)+?))?}',
+            self._convert,
+            expression
         )
 
         if self._anchor is not None:
@@ -118,6 +126,7 @@ class Template(object):
             if bool(self._anchor & self.ANCHOR_END):
                 expression = '{0}$'.format(expression)
 
+        # Compile expression.
         try:
             compiled = _regex.compile(expression)
         except _regex._regex_core.error as error:
@@ -134,8 +143,6 @@ class Template(object):
     def _convert(self, match):
         '''Return a regular expression to represent *match*.'''
         placeholder_name = match.group('placeholder')
-        if not placeholder_name:
-            raise ValueError('Placeholder name not specified.')
 
         # Support period (.) as nested key indicator. Currently, a period is
         # not a valid character for a group name in the standard Python regex
@@ -151,4 +158,12 @@ class Template(object):
         expression = expression.replace('\{', '{').replace('\}', '}')
 
         return r'(?P<{0}>{1})'.format(placeholder_name, expression)
+
+    def _escape(self, match):
+        '''Escape matched 'other' group value.'''
+        groups = match.groupdict()
+        if groups['other'] is not None:
+            return _regex.escape(groups['other'])
+
+        return groups['placeholder']
 
