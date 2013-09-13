@@ -143,8 +143,6 @@ class Template(object):
     def _convert(self, match):
         '''Return a regular expression to represent *match*.'''
         placeholder_name = match.group('placeholder')
-        if not placeholder_name:
-            raise ValueError('Placeholder name not specified.')
 
         # Support period (.) as nested key indicator. Currently, a period is
         # not a valid character for a group name in the standard Python regex
