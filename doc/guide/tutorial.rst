@@ -71,12 +71,46 @@ With a template defined we can now parse a path and extract data from it::
     ``{asset_name}`` and ``{lod}`` above), the last matching value is used for 
     the returned data.
 
-If a template's pattern does not match the full path exactly then
+If a template's pattern does not match the path then
 :py:meth:`~lucidity.template.Template.parse` will raise a
 :py:class:`~lucidity.error.ParseError`::
 
-    >>> print template.parse('/jobs/monty/assets')
-    ParseError: Input '/jobs/monty/assets' did not match template pattern.
+    >>> print template.parse('/other/monty/assets')
+    ParseError: Input '/other/monty/assets' did not match template pattern.
+
+Anchoring
+^^^^^^^^^
+
+By default, a pattern is anchored at the start, requiring that the start of a
+path match the pattern::
+
+    >>> job_template = lucidity.Template('job', '/job/{job}')
+    >>> print job_template.parse('/job/monty')
+    {'job': 'monty'}
+    >>> print job_template.parse('/job/monty/extra/path')
+    {'job': 'monty'}
+    >>> print job_template.parse('/other/job/monty')
+    ParseError: Input '/other/job/monty' did not match template pattern.
+
+The anchoring can be changed when constructing a template by passing an
+*anchor* keyword in::
+
+    >>> filename_template = lucidity.Template(
+    ...     'filename',
+    ...     '{filename}.{index}.{ext}',
+    ...     anchor=lucidity.Template.ANCHOR_END
+    ... )
+    >>> print filename_template.parse('/some/path/to/file.0001.dpx')
+    {'filename': 'file', 'index': '0001', 'ext': 'dpx'}
+
+The anchor can be one of:
+
+    * :attr:`~template.Template.ANCHOR_START` - Match pattern at the start
+      of the string.
+    * :attr:`~template.Template.ANCHOR_END` - Match pattern at the end of
+      the string.
+    * :attr:`~template.Template.ANCHOR_BOTH` - Match pattern exactly.
+    * ``None`` - Match pattern once anywhere in the string.
     
 Formatting
 ----------
