@@ -140,10 +140,14 @@ def test_format(pattern, data, expected):
 
 @pytest.mark.parametrize(('pattern', 'data'), [
     ('/single/{variable}', {}),
-    ('/{variable_a}/{variable_b}', {'variable_a': 'value'})
+    ('/{variable_a}/{variable_b}', {'variable_a': 'value'}),
+    ('{nested.variable}', {}),
+    ('{nested.variable}', {'nested': {}}),
 ], ids=[
     'missing single variable',
-    'partial data'
+    'partial data',
+    'missing top level nested variable',
+    'missing nested variable'
 ])
 def test_format_failure(pattern, data):
     '''Format incomplete data against pattern.'''
