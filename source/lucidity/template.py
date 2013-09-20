@@ -91,7 +91,7 @@ class Template(object):
         bunchified = bunch.bunchify(data)
         try:
             path = self._format.format(**bunchified)
-        except KeyError as error:
+        except (AttributeError, KeyError) as error:
             raise lucidity.error.FormatError(
                 'Could not format data {0!r} due to missing key {1!r}.'
                 .format(data, error.args[0])
