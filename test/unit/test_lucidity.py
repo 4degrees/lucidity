@@ -19,8 +19,8 @@ TEST_TEMPLATE_PATH = os.path.join(
 def templates():
     '''Return candidate templates.'''
     return [
-        lucidity.Template('model', '/jobs/{job}/assets/model/{lod}'),
-        lucidity.Template('rig', '/jobs/{job}/assets/rig/{rig_type}'),
+        lucidity.Template('model', '/jobs/{job.code}/assets/model/{lod}'),
+        lucidity.Template('rig', '/jobs/{job.code}/assets/rig/{rig_type}')
     ]
 
 
@@ -54,8 +54,10 @@ def test_discover_with_env(path, expected, monkeypatch):
 
 
 @pytest.mark.parametrize(('path', 'expected'), [
-    ('/jobs/monty/assets/model/high', {'job': 'monty', 'lod': 'high'}),
-    ('/jobs/monty/assets/rig/anim', {'job': 'monty', 'rig_type': 'anim'})
+    ('/jobs/monty/assets/model/high',
+     {'job': {'code': 'monty'}, 'lod': 'high'}),
+    ('/jobs/monty/assets/rig/anim',
+     {'job': {'code': 'monty'}, 'rig_type': 'anim'})
 ], ids=[
     'model',
     'rig'
@@ -73,8 +75,10 @@ def test_unsuccessfull_parse(templates):
 
 
 @pytest.mark.parametrize(('data', 'expected'), [
-    ({'job': 'monty', 'lod': 'high'}, '/jobs/monty/assets/model/high'),
-    ({'job': 'monty', 'rig_type': 'anim'}, '/jobs/monty/assets/rig/anim')
+    ({'job': {'code': 'monty'}, 'lod': 'high'},
+     '/jobs/monty/assets/model/high'),
+    ({'job': {'code': 'monty'}, 'rig_type': 'anim'},
+     '/jobs/monty/assets/rig/anim')
 ], ids=[
     'model',
     'rig'
@@ -85,7 +89,20 @@ def test_successfull_format(data, expected, templates):
     assert path == expected
 
 
-def test_unsuccessfull_format(templates):
+@pytest.mark.parametrize('data', [
+    {},
+    {'lod': 'high'},
+    {'job': {}, 'lod': 'high'},
+    {'job': 'monty'},
+], ids=[
+    'empty data',
+    'partial data',
+    'missing nested variable',
+    'invalid nested reference'
+])
+def test_unsuccessfull_format(data, templates):
     '''Unsuccessful formatting of data against multiple candidate templates.'''
     with pytest.raises(lucidity.FormatError):
-        lucidity.format({}, templates)
+        lucidity.format(data, templates)
+
+
