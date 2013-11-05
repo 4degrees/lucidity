@@ -12,3 +12,7 @@ class ParseError(Exception):
 class FormatError(Exception):
     '''Raise when a template is unable to format data into a path.'''
 
+
+class NotFound(Exception):
+    '''Raise when an item cannot be found.'''
+

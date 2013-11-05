@@ -106,3 +106,17 @@ def test_unsuccessfull_format(data, templates):
         lucidity.format(data, templates)
 
 
+def test_get_template(templates):
+    '''Retrieve template by name.'''
+    template = lucidity.get_template('rig', templates)
+    assert template == templates[-1]
+    assert template.name == 'rig'
+
+
+def test_get_missing_template(templates):
+    '''Fail to retrieve missing template by name.'''
+    with pytest.raises(lucidity.NotFound):
+        lucidity.get_template('non-existent-template', templates)
+
+    with pytest.raises(lucidity.NotFound):
+        lucidity.get_template('rig', [])
