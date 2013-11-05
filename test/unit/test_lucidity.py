@@ -117,3 +117,6 @@ def test_get_missing_template(templates):
     '''Fail to retrieve missing template by name.'''
     with pytest.raises(lucidity.NotFound):
         lucidity.get_template('non-existent-template', templates)
+
+    with pytest.raises(lucidity.NotFound):
+        lucidity.get_template('rig', [])
