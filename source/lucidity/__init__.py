@@ -8,7 +8,7 @@ import imp
 
 from ._version import __version__
 from .template import Template
-from .error import ParseError, FormatError
+from .error import ParseError, FormatError, NotFound
 
 
 def discover_templates(paths=None, recursive=True):
@@ -111,3 +111,18 @@ def format(data, templates):  # @ReservedAssignment
         .format(data)
     )
 
+
+def get_template(name, templates):
+    '''Retrieve a template from *templates* by *name*.
+
+    Raise :py:exc:`~lucidity.error.NotFound` if no matching template with
+    *name* found in *templates*.
+
+    '''
+    for template in templates:
+        if template.name == name:
+            return template
+
+    raise NotFound(
+        '{0} template not found in specified templates.'.format(name)
+    )
