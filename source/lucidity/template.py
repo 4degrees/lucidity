@@ -37,6 +37,7 @@ class Template(object):
         self._anchor = anchor
         self._regex = self._construct_regular_expression(self.pattern)
         self._format = self._construct_format_expression(self.pattern)
+        self._placeholders = self._extract_placeholders(self.pattern)
 
     def __repr__(self):
         '''Return unambiguous representation of template.'''
@@ -98,6 +99,13 @@ class Template(object):
             )
         else:
             return path
+
+    def keys(self):
+        return self._placeholders
+
+    def _extract_placeholders(self, pattern):
+        match = _regex.findall(r'(?P<placeholder>{(.+?)(:(\\}|.)+?)?})', pattern)
+        return list(set([g[1] for g in match]))
 
     def _construct_format_expression(self, pattern):
         '''Return format expression from *pattern*.'''
