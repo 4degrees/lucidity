@@ -106,7 +106,9 @@ class Template(object):
 
     def _extract_placeholders(self, pattern):
         '''Extract and return unique set of placeholders in *pattern*.'''
-        match = _regex.findall(r'(?P<placeholder>{(.+?)(:(\\}|.)+?)?})', pattern)
+        match = _regex.findall(
+            r'(?P<placeholder>{(.+?)(:(\\}|.)+?)?})', pattern
+        )
         return list(set([g[1] for g in match]))
 
     def _construct_format_expression(self, pattern):
