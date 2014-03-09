@@ -109,7 +109,7 @@ class Template(object):
         match = _regex.findall(
             r'(?P<placeholder>{(.+?)(:(\\}|.)+?)?})', pattern
         )
-        return list(set([g[1] for g in match]))
+        return set([g[1] for g in match])
 
     def _construct_format_expression(self, pattern):
         '''Return format expression from *pattern*.'''
