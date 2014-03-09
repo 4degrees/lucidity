@@ -101,9 +101,11 @@ class Template(object):
             return path
 
     def keys(self):
+        '''Return unique set of placeholders in pattern.'''
         return self._placeholders
 
     def _extract_placeholders(self, pattern):
+        '''Extract and return unique set of placeholders in *pattern*.'''
         match = _regex.findall(r'(?P<placeholder>{(.+?)(:(\\}|.)+?)?})', pattern)
         return list(set([g[1] for g in match]))
 
