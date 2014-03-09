@@ -102,7 +102,7 @@ class Template(object):
 
     def keys(self):
         '''Return unique set of placeholders in pattern.'''
-        return self._placeholders
+        return self._placeholders.copy()
 
     def _extract_placeholders(self, pattern):
         '''Extract and return unique set of placeholders in *pattern*.'''
