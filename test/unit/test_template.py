@@ -168,6 +168,7 @@ def test_escaping_pattern():
     expected = {'filename': 'filename', 'index': '0001', 'ext': 'ext'}
     assert template.parse('filename.0001.ext') == expected
 
+
 @pytest.mark.parametrize(('pattern', 'expected'), [
     ('/static/string', []),
     ('/single/{variable}', ['variable']),
@@ -185,8 +186,8 @@ def test_escaping_pattern():
     'structured placeholders',
     'neighbouring variables'
 ])
-def test_extract_placeholders(pattern, expected):
-    '''Extract data from matching path.'''
+def test_keys(pattern, expected):
+    '''Get keys in pattern..'''
     template = Template('test', pattern)
     placeholders = template.keys()
     assert sorted(placeholders) == sorted(expected)
