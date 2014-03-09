@@ -191,3 +191,17 @@ def test_keys(pattern, expected):
     template = Template('test', pattern)
     placeholders = template.keys()
     assert sorted(placeholders) == sorted(expected)
+
+
+def test_keys_mutable_side_effect():
+    '''Avoid side effects mutating internal keys set.'''
+    template = Template('test', '/single/{variable}')
+    placeholders = template.keys()
+    assert placeholders == set(['variable'])
+
+    # Mutate returned set.
+    placeholders.add('other')
+
+    # Newly returned set should be unaffected.
+    placeholders_b = template.keys()
+    assert placeholders_b == set(['variable'])
