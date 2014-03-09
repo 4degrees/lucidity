@@ -187,7 +187,7 @@ def test_escaping_pattern():
     'neighbouring variables'
 ])
 def test_keys(pattern, expected):
-    '''Get keys in pattern..'''
+    '''Get keys in pattern.'''
     template = Template('test', pattern)
     placeholders = template.keys()
     assert sorted(placeholders) == sorted(expected)
