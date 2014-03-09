@@ -49,6 +49,12 @@ Now, construct a template with the pattern above::
     The template must be given a name to identify it. The name becomes useful
     when you have a bunch of templates to manage.
 
+You can check the identified placeholders in a template using the
+:py:meth:`Template.keys <lucidity.template.Template.keys>` method::
+
+    >>> print template.keys()
+    set(['job', 'asset_name', 'lod', 'version', 'filetype'])
+
 Parsing
 -------
 

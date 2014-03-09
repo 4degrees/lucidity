@@ -168,3 +168,40 @@ def test_escaping_pattern():
     expected = {'filename': 'filename', 'index': '0001', 'ext': 'ext'}
     assert template.parse('filename.0001.ext') == expected
 
+
+@pytest.mark.parametrize(('pattern', 'expected'), [
+    ('/static/string', []),
+    ('/single/{variable}', ['variable']),
+    ('/{variable}/{variable}', ['variable']),
+    ('/static/{variable:\d\{4\}}', ['variable']),
+    ('/{a}/static/{b}', ['a', 'b']),
+    ('/{a.b.c}/static/{a.b.d}', ['a.b.c', 'a.b.d']),
+    ('/{a}_{b}', ['a', 'b'])
+], ids=[
+    'static string',
+    'single variable',
+    'duplicate variable',
+    'custom variable expression',
+    'mix of static and variables',
+    'structured placeholders',
+    'neighbouring variables'
+])
+def test_keys(pattern, expected):
+    '''Get keys in pattern.'''
+    template = Template('test', pattern)
+    placeholders = template.keys()
+    assert sorted(placeholders) == sorted(expected)
+
+
+def test_keys_mutable_side_effect():
+    '''Avoid side effects mutating internal keys set.'''
+    template = Template('test', '/single/{variable}')
+    placeholders = template.keys()
+    assert placeholders == set(['variable'])
+
+    # Mutate returned set.
+    placeholders.add('other')
+
+    # Newly returned set should be unaffected.
+    placeholders_b = template.keys()
+    assert placeholders_b == set(['variable'])
