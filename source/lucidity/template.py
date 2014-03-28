@@ -3,8 +3,9 @@
 # :license: See LICENSE.txt.
 
 import sys
+import re
+from collections import defaultdict
 
-import regex as _regex
 import bunch
 
 import lucidity.error
@@ -13,7 +14,7 @@ import lucidity.error
 class Template(object):
     '''A template.'''
 
-    _STRIP_EXPRESSION_REGEX = _regex.compile(r'{(.+?)(:(\\}|.)+?)}')
+    _STRIP_EXPRESSION_REGEX = re.compile(r'{(.+?)(:(\\}|.)+?)}')
 
     ANCHOR_START, ANCHOR_END, ANCHOR_BOTH = (1, 2, 3)
 
@@ -35,6 +36,7 @@ class Template(object):
         self._name = name
         self._pattern = pattern
         self._anchor = anchor
+        self._placeholderCount = defaultdict(int)
         self._regex = self._construct_regular_expression(self.pattern)
         self._format = self._construct_format_expression(self.pattern)
         self._placeholders = self._extract_placeholders(self.pattern)
@@ -65,10 +67,13 @@ class Template(object):
         match = self._regex.search(path)
         if match:
             data = {}
-            for key, value in match.groupdict().items():
-                target = data
+            for key, value in sorted(match.groupdict().items()):
+                # Strip number that was added to make group name unique.
+                key = key[:-3]
 
                 # Expand dot notation keys into nested dictionaries.
+                target = data
+
                 parts = key.split(self._period_code)
                 for part in parts[:-1]:
                     target = target.setdefault(part, {})
@@ -106,7 +111,7 @@ class Template(object):
 
     def _extract_placeholders(self, pattern):
         '''Extract and return unique set of placeholders in *pattern*.'''
-        match = _regex.findall(
+        match = re.findall(
             r'(?P<placeholder>{(.+?)(:(\\}|.)+?)?})', pattern
         )
         return set([group[1] for group in match])
@@ -118,14 +123,14 @@ class Template(object):
     def _construct_regular_expression(self, pattern):
         '''Return a regular expression to represent *pattern*.'''
         # Escape non-placeholder components.
-        expression = _regex.sub(
+        expression = re.sub(
             r'(?P<placeholder>{(.+?)(:(\\}|.)+?)?})|(?P<other>.+?)',
             self._escape,
             pattern
         )
 
         # Replace placeholders with regex pattern.
-        expression = _regex.sub(
+        expression = re.sub(
             r'{(?P<placeholder>.+?)(:(?P<expression>(\\}|.)+?))?}',
             self._convert,
             expression
@@ -140,8 +145,8 @@ class Template(object):
 
         # Compile expression.
         try:
-            compiled = _regex.compile(expression)
-        except _regex._regex_core.error as error:
+            compiled = re.compile(expression)
+        except re.error as error:
             if 'bad group name' in error:
                 raise ValueError('Placeholder name contains invalid '
                                  'characters.')
@@ -162,6 +167,14 @@ class Template(object):
         # the restriction with a unique identifier.
         placeholder_name = placeholder_name.replace('.', self._period_code)
 
+        # The re module does not support duplicate group names. To support
+        # duplicate placeholder names in templates add a unique count to the
+        # regular expression group name and strip it later during parse.
+        self._placeholderCount[placeholder_name] += 1
+        placeholder_name += '{0:03d}'.format(
+            self._placeholderCount[placeholder_name]
+        )
+
         expression = match.group('expression')
         if expression is None:
             expression = self._default_placeholder_expression
@@ -175,7 +188,7 @@ class Template(object):
         '''Escape matched 'other' group value.'''
         groups = match.groupdict()
         if groups['other'] is not None:
-            return _regex.escape(groups['other'])
+            return re.escape(groups['other'])
 
         return groups['placeholder']
 
