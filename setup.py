@@ -52,7 +52,6 @@ setup(
         '': 'source'
     },
     install_requires=[
-        'regex >= 2.4.26',
         'bunch >= 1.0.1'
     ],
     tests_require=['pytest >= 2.3.5'],
