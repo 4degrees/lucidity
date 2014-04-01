@@ -4,11 +4,15 @@
 
 import sys
 import re
+import copy
 from collections import defaultdict
 
 import bunch
 
 import lucidity.error
+
+# Type of a RegexObject for isinstance check.
+_RegexType = type(re.compile(''))
 
 
 class Template(object):
@@ -46,6 +50,23 @@ class Template(object):
         return '{0}(name={1!r}, pattern={2!r})'.format(
             self.__class__.__name__, self.name, self.pattern
         )
+
+    def __deepcopy__(self, memo):
+        '''Return deep copy of template.'''
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+
+        for key, value in self.__dict__.items():
+            if isinstance(value, _RegexType):
+                # RegexObject is not deepcopyable, so store a new instance
+                # compiled using the same pattern. Note that the compiled result
+                #  will typically be the same instance.
+                setattr(result, key, re.compile(value.pattern))
+            else:
+                setattr(result, key, copy.deepcopy(value, memo))
+
+        return result
 
     @property
     def name(self):

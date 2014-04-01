@@ -2,6 +2,8 @@
 # :copyright: Copyright (c) 2013 Martin Pengelly-Phillips
 # :license: See LICENSE.txt.
 
+import copy
+
 import pytest
 
 from lucidity import Template
@@ -205,3 +207,11 @@ def test_keys_mutable_side_effect():
     # Newly returned set should be unaffected.
     placeholders_b = template.keys()
     assert placeholders_b == set(['variable'])
+
+
+def test_deepcopy():
+    '''Deepcopy template.'''
+    template = Template('test', '/single/{variable}')
+    copied_template = copy.deepcopy(template)
+
+    assert template._regex == copied_template._regex
