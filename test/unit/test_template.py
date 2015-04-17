@@ -83,6 +83,50 @@ def test_non_matching_parse(pattern, path):
         data = template.parse(path)
 
 
+@pytest.mark.parametrize(('pattern', 'path', 'expected'), [
+    ('/{variable}/{variable}', '/value/value', {'variable': 'value'}),
+    ('/static/{variable:\d\{4\}}/other/{variable}', '/static/1234/other/1234',
+     {'variable': '1234'}),
+    ('/{a.b.c}/static/{a.b.c}', '/value/static/value',
+     {'a': {'b': {'c': 'value'}}}),
+    ('/{a}/{b}/other/{a}_{b}', '/a/b/other/a_b', {'a': 'a', 'b': 'b'}),
+], ids=[
+    'simple duplicate',
+    'duplicate with one specialised expression',
+    'structured duplicate',
+    'multiple duplicates'
+])
+def test_valid_parse_in_strict_mode(pattern, path, expected):
+    '''Extract data in strict mode when no invalid duplicates detected.'''
+    template = Template(
+        'test', pattern, duplicate_placeholder_mode=Template.STRICT
+    )
+    data = template.parse(path)
+    assert data == expected
+
+
+@pytest.mark.parametrize(('pattern', 'path'), [
+    ('/{variable}/{variable}', '/a/b'),
+    ('/static/{variable:\d\{4\}}/other/{variable}', '/static/1234/other/2345'),
+    ('/{a.b.c}/static/{a.b.c}', '/c1/static/c2'),
+    ('/{a}/{b}/other/{a}_{b}', '/a/b/other/c_d')
+], ids=[
+    'simple duplicate',
+    'duplicate with one specialised expression',
+    'structured duplicate',
+    'multiple duplicates'
+])
+def test_invalid_parse_in_strict_mode(pattern, path):
+    '''Fail to extract data in strict mode when invalid duplicates detected.'''
+    template = Template(
+        'test', pattern, duplicate_placeholder_mode=Template.STRICT
+    )
+    with pytest.raises(ParseError) as exception:
+        template.parse(path)
+
+    assert 'Different extracted values' in str(exception.value)
+
+
 @pytest.mark.parametrize(('path', 'anchor', 'expected'), [
     ('/static/value/extra', Template.ANCHOR_START, True),
     ('/static/', Template.ANCHOR_START, False),
