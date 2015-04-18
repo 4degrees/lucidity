@@ -71,18 +71,39 @@ With a template defined we can now parse a path and extract data from it::
         'filetype': 'abc'
     }
 
-.. note::
-
-    When a group name in a pattern occurs more than once (as with 
-    ``{asset_name}`` and ``{lod}`` above), the last matching value is used for 
-    the returned data.
-
 If a template's pattern does not match the path then
 :py:meth:`~lucidity.template.Template.parse` will raise a
 :py:class:`~lucidity.error.ParseError`::
 
     >>> print template.parse('/other/monty/assets')
     ParseError: Input '/other/monty/assets' did not match template pattern.
+
+Handling Duplicate Placeholders
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+It is perfectly acceptable for a template to contain the same placeholder
+multiple times, as seen in the template constructed above. When parsing, by
+default, the last matching value for a placeholder is used::
+
+    >>> path = '/jobs/monty/assets/circus/model/high/spaceship_high_v001.abc'
+    >>> data = template.parse(path)
+    >>> print data['asset_name']
+    spaceship
+
+This is called :attr:`~lucidity.template.Template.RELAXED` mode. If this
+behaviour is not desirable then the *duplicate_placeholder_mode* of any
+:class:`~lucidity.template.Template` can be set to
+:attr:`~lucidity.template.Template.STRICT` mode instead::
+
+    >>> path = '/jobs/monty/assets/circus/model/high/spaceship_high_v001.abc'
+    >>> template.duplicate_placeholder_mode = template.STRICT
+    >>> template.parse(path)
+    ParseError: Different extracted values for placeholder 'asset_name' detected. Values were 'circus' and 'spaceship'.
+
+.. note::
+
+    *duplicate_placeholder_mode* can also be passed as an argument when
+    constructing a template.
 
 Anchoring
 ^^^^^^^^^
