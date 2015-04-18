@@ -22,8 +22,11 @@ class Template(object):
 
     ANCHOR_START, ANCHOR_END, ANCHOR_BOTH = (1, 2, 3)
 
+    RELAXED, STRICT = (1, 2)
+
     def __init__(self, name, pattern, anchor=ANCHOR_START,
-                 default_placeholder_expression='[\w_.\-]+'):
+                 default_placeholder_expression='[\w_.\-]+',
+                 duplicate_placeholder_mode=RELAXED):
         '''Initialise with *name* and *pattern*.
 
         *anchor* determines how the pattern is anchored during a parse. A
@@ -33,8 +36,16 @@ class Template(object):
         (a full path match) use :attr:`~Template.ANCHOR_BOTH`. Finally,
         ``None`` will try to match the pattern once anywhere in the path.
 
+        *duplicate_placeholder_mode* determines how duplicate placeholders will
+        be handled during parsing. :attr:`~Template.RELAXED` mode extracts the
+        last matching value without checking the other values.
+        :attr:`~Template.STRICT` mode ensures that all duplicate placeholders
+        extract the same value and raises :exc:`~lucidity.error.ParseError` if
+        they do not.
+
         '''
         super(Template, self).__init__()
+        self.duplicate_placeholder_mode = duplicate_placeholder_mode
         self._default_placeholder_expression = default_placeholder_expression
         self._period_code = '_LPD_'
         self._name = name
@@ -85,12 +96,27 @@ class Template(object):
         parseable by this template.
 
         '''
+        parsed = {}
+
         match = self._regex.search(path)
         if match:
             data = {}
             for key, value in sorted(match.groupdict().items()):
                 # Strip number that was added to make group name unique.
                 key = key[:-3]
+
+                # If strict mode enabled for duplicate placeholders, ensure that
+                # all duplicate placeholders extract the same value.
+                if self.duplicate_placeholder_mode == self.STRICT:
+                    if key in parsed:
+                        if parsed[key] != value:
+                            raise lucidity.error.ParseError(
+                                'Different extracted values for placeholder '
+                                '{0!r} detected. Values were {1!r} and {2!r}.'
+                                .format(key, parsed[key], value)
+                            )
+                    else:
+                        parsed[key] = value
 
                 # Expand dot notation keys into nested dictionaries.
                 target = data
