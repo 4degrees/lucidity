@@ -55,7 +55,9 @@ class Template(object):
         self._format_specification = self._construct_format_specification(
             self.pattern
         )
-        self._placeholders = self._extract_placeholders(self.pattern)
+        self._placeholders = self._extract_placeholders(
+            self._format_specification
+        )
 
     def __repr__(self):
         '''Return unambiguous representation of template.'''
@@ -171,10 +173,7 @@ class Template(object):
 
     def _extract_placeholders(self, pattern):
         '''Extract and return unique set of placeholders in *pattern*.'''
-        match = re.findall(
-            r'(?P<placeholder>{(.+?)(:(\\}|.)+?)?})', pattern
-        )
-        return set([group[1] for group in match])
+        return set(self._PLAIN_PLACEHOLDER_REGEX.findall(pattern))
 
     def _construct_format_specification(self, pattern):
         '''Return format specification from *pattern*.'''
