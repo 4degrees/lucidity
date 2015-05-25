@@ -52,7 +52,9 @@ class Template(object):
         self._anchor = anchor
         self._placeholderCount = defaultdict(int)
         self._regex = self._construct_regular_expression(self.pattern)
-        self._format = self._construct_format_expression(self.pattern)
+        self._format_specification = self._construct_format_specification(
+            self.pattern
+        )
         self._placeholders = self._extract_placeholders(self.pattern)
 
     def __repr__(self):
@@ -159,7 +161,9 @@ class Template(object):
             else:
                 return value
 
-        return self._PLAIN_PLACEHOLDER_REGEX.sub(_format, self._format)
+        return self._PLAIN_PLACEHOLDER_REGEX.sub(
+            _format, self._format_specification
+        )
 
     def keys(self):
         '''Return unique set of placeholders in pattern.'''
@@ -172,8 +176,8 @@ class Template(object):
         )
         return set([group[1] for group in match])
 
-    def _construct_format_expression(self, pattern):
-        '''Return format expression from *pattern*.'''
+    def _construct_format_specification(self, pattern):
+        '''Return format specification from *pattern*.'''
         return self._STRIP_EXPRESSION_REGEX.sub('{\g<1>}', pattern)
 
     def _construct_regular_expression(self, pattern):
