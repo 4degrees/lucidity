@@ -7,8 +7,6 @@ import re
 import copy
 from collections import defaultdict
 
-import bunch
-
 import lucidity.error
 
 # Type of a RegexObject for isinstance check.
@@ -19,6 +17,7 @@ class Template(object):
     '''A template.'''
 
     _STRIP_EXPRESSION_REGEX = re.compile(r'{(.+?)(:(\\}|.)+?)}')
+    _PLAIN_PLACEHOLDER_REGEX = re.compile(r'{(.+?)}')
 
     ANCHOR_START, ANCHOR_END, ANCHOR_BOTH = (1, 2, 3)
 
@@ -53,8 +52,12 @@ class Template(object):
         self._anchor = anchor
         self._placeholderCount = defaultdict(int)
         self._regex = self._construct_regular_expression(self.pattern)
-        self._format = self._construct_format_expression(self.pattern)
-        self._placeholders = self._extract_placeholders(self.pattern)
+        self._format_specification = self._construct_format_specification(
+            self.pattern
+        )
+        self._placeholders = self._extract_placeholders(
+            self._format_specification
+        )
 
     def __repr__(self):
         '''Return unambiguous representation of template.'''
@@ -141,16 +144,28 @@ class Template(object):
         supply enough information to fill the template fields.
 
         '''
-        bunchified = bunch.bunchify(data)
-        try:
-            path = self._format.format(**bunchified)
-        except (AttributeError, KeyError) as error:
-            raise lucidity.error.FormatError(
-                'Could not format data {0!r} due to missing key {1!r}.'
-                .format(data, error.args[0])
-            )
-        else:
-            return path
+        def _format(match):
+            '''Return value from data for *match*.'''
+            placeholder = match.group(1)
+            parts = placeholder.split('.')
+
+            try:
+                value = data
+                for part in parts:
+                    value = value[part]
+
+            except (TypeError, KeyError):
+                raise lucidity.error.FormatError(
+                    'Could not format data {0!r} due to missing key {1!r}.'
+                    .format(data, placeholder)
+                )
+
+            else:
+                return value
+
+        return self._PLAIN_PLACEHOLDER_REGEX.sub(
+            _format, self._format_specification
+        )
 
     def keys(self):
         '''Return unique set of placeholders in pattern.'''
@@ -158,13 +173,10 @@ class Template(object):
 
     def _extract_placeholders(self, pattern):
         '''Extract and return unique set of placeholders in *pattern*.'''
-        match = re.findall(
-            r'(?P<placeholder>{(.+?)(:(\\}|.)+?)?})', pattern
-        )
-        return set([group[1] for group in match])
+        return set(self._PLAIN_PLACEHOLDER_REGEX.findall(pattern))
 
-    def _construct_format_expression(self, pattern):
-        '''Return format expression from *pattern*.'''
+    def _construct_format_specification(self, pattern):
+        '''Return format specification from *pattern*.'''
         return self._STRIP_EXPRESSION_REGEX.sub('{\g<1>}', pattern)
 
     def _construct_regular_expression(self, pattern):
