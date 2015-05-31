@@ -26,7 +26,8 @@ class Template(object):
 
     def __init__(self, name, pattern, anchor=ANCHOR_START,
                  default_placeholder_expression='[\w_.\-]+',
-                 duplicate_placeholder_mode=RELAXED):
+                 duplicate_placeholder_mode=RELAXED,
+                 template_resolver=None):
         '''Initialise with *name* and *pattern*.
 
         *anchor* determines how the pattern is anchored during a parse. A
@@ -43,9 +44,15 @@ class Template(object):
         extract the same value and raises :exc:`~lucidity.error.ParseError` if
         they do not.
 
+        If *template_resolver* is supplied, use it to resolve any template
+        references in the *pattern* during operations. It should conform to the
+        :class:`Resolver` interface.
+
         '''
         super(Template, self).__init__()
         self.duplicate_placeholder_mode = duplicate_placeholder_mode
+        self.template_resolver = template_resolver
+
         self._default_placeholder_expression = default_placeholder_expression
         self._period_code = '_LPD_'
         self._at_code = '_WXV_'
