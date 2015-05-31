@@ -61,13 +61,6 @@ class Template(object):
         self._name = name
         self._pattern = pattern
         self._anchor = anchor
-        self._regex = self._construct_regular_expression(self.pattern)
-        self._format_specification = self._construct_format_specification(
-            self.pattern
-        )
-        self._placeholders = self._extract_placeholders(
-            self._format_specification
-        )
 
     def __repr__(self):
         '''Return unambiguous representation of template.'''
@@ -139,9 +132,13 @@ class Template(object):
         parsable by this template.
 
         '''
+        # Construct regular expression for expanded pattern.
+        regex = self._construct_regular_expression(self.expanded_pattern())
+
+        # Parse.
         parsed = {}
 
-        match = self._regex.search(path)
+        match = regex.search(path)
         if match:
             data = {}
             for key, value in sorted(match.groupdict().items()):
@@ -185,10 +182,13 @@ class Template(object):
 
         '''
 
+        format_specification = self._construct_format_specification(
+            self.expanded_pattern()
+        )
 
         return self._PLAIN_PLACEHOLDER_REGEX.sub(
             functools.partial(self._format, data=data),
-            self._format_specification
+            format_specification
         )
 
     def _format(self, match, data):
@@ -212,11 +212,11 @@ class Template(object):
 
     def keys(self):
         '''Return unique set of placeholders in pattern.'''
-        return self._placeholders.copy()
+        format_specification = self._construct_format_specification(
+            self.expanded_pattern()
+        )
+        return set(self._PLAIN_PLACEHOLDER_REGEX.findall(format_specification))
 
-    def _extract_placeholders(self, pattern):
-        '''Extract and return unique set of placeholders in *pattern*.'''
-        return set(self._PLAIN_PLACEHOLDER_REGEX.findall(pattern))
 
     def _construct_format_specification(self, pattern):
         '''Return format specification from *pattern*.'''
