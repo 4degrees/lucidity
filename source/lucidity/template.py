@@ -48,6 +48,7 @@ class Template(object):
         self.duplicate_placeholder_mode = duplicate_placeholder_mode
         self._default_placeholder_expression = default_placeholder_expression
         self._period_code = '_LPD_'
+        self._at_code = '_WXV_'
         self._name = name
         self._pattern = pattern
         self._anchor = anchor
@@ -229,6 +230,12 @@ class Template(object):
 
         '''
         placeholder_name = match.group('placeholder')
+
+        # Support at symbol (@) as referenced template indicator. Currently,
+        # this symbol not a valid character for a group name in the standard
+        # Python regex library. Rather than rewrite or monkey patch the library
+        # work around the restriction with a unique identifier.
+        placeholder_name = placeholder_name.replace('@', self._at_code)
 
         # Support period (.) as nested key indicator. Currently, a period is
         # not a valid character for a group name in the standard Python regex
