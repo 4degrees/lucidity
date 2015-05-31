@@ -20,6 +20,7 @@ class Template(object):
 
     _STRIP_EXPRESSION_REGEX = re.compile(r'{(.+?)(:(\\}|.)+?)}')
     _PLAIN_PLACEHOLDER_REGEX = re.compile(r'{(.+?)}')
+    _TEMPLATE_REFERENCE_REGEX = re.compile(r'{@(?P<reference>.+?)}')
 
     ANCHOR_START, ANCHOR_END, ANCHOR_BOTH = (1, 2, 3)
 
@@ -100,6 +101,36 @@ class Template(object):
     def pattern(self):
         '''Return template pattern.'''
         return self._pattern
+
+    def expanded_pattern(self):
+        '''Return pattern with all referenced templates expanded recursively.
+
+        Raise :exc:`lucidity.error.ResolveError` if pattern contains a reference
+        that cannot be resolved by currently set template_resolver.
+
+        '''
+        return self._TEMPLATE_REFERENCE_REGEX.sub(
+            self._expand_reference, self.pattern
+        )
+
+    def _expand_reference(self, match):
+        '''Expand reference represented by *match*.'''
+        reference = match.group('reference')
+
+        if self.template_resolver is None:
+            raise lucidity.error.ResolveError(
+                'Failed to resolve reference {0!r} as no template resolver set.'
+                .format(reference)
+            )
+
+        template = self.template_resolver.get(reference)
+        if template is None:
+            raise lucidity.error.ResolveError(
+                'Failed to resolve reference {0!r} using template resolver.'
+                .format(reference)
+            )
+
+        return template.expanded_pattern()
 
     def parse(self, path):
         '''Return dictionary of data extracted from *path* using this template.

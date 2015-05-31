@@ -16,3 +16,6 @@ class FormatError(Exception):
 class NotFound(Exception):
     '''Raise when an item cannot be found.'''
 
+
+class ResolveError(Exception):
+    '''Raise when a template reference can not be resolved.'''
