@@ -153,28 +153,31 @@ class Template(object):
         supply enough information to fill the template fields.
 
         '''
-        def _format(match):
-            '''Return value from data for *match*.'''
-            placeholder = match.group(1)
-            parts = placeholder.split('.')
 
-            try:
-                value = data
-                for part in parts:
-                    value = value[part]
-
-            except (TypeError, KeyError):
-                raise lucidity.error.FormatError(
-                    'Could not format data {0!r} due to missing key {1!r}.'
-                    .format(data, placeholder)
-                )
-
-            else:
-                return value
 
         return self._PLAIN_PLACEHOLDER_REGEX.sub(
-            _format, self._format_specification
+            functools.partial(self._format, data=data),
+            self._format_specification
         )
+
+    def _format(self, match, data):
+        '''Return value from data for *match*.'''
+        placeholder = match.group(1)
+        parts = placeholder.split('.')
+
+        try:
+            value = data
+            for part in parts:
+                value = value[part]
+
+        except (TypeError, KeyError):
+            raise lucidity.error.FormatError(
+                'Could not format data {0!r} due to missing key {1!r}.'
+                .format(data, placeholder)
+            )
+
+        else:
+            return value
 
     def keys(self):
         '''Return unique set of placeholders in pattern.'''
