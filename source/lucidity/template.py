@@ -62,6 +62,9 @@ class Template(object):
         self._pattern = pattern
         self._anchor = anchor
 
+        # Check that supplied pattern is valid and able to be compiled.
+        self._construct_regular_expression(self.pattern)
+
     def __repr__(self):
         '''Return unambiguous representation of template.'''
         return '{0}(name={1!r}, pattern={2!r})'.format(
