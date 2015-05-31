@@ -96,7 +96,7 @@ class Template(object):
         '''Return dictionary of data extracted from *path* using this template.
 
         Raise :py:class:`~lucidity.error.ParseError` if *path* is not
-        parseable by this template.
+        parsable by this template.
 
         '''
         parsed = {}
