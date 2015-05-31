@@ -4,6 +4,7 @@
 
 import sys
 import re
+import functools
 import copy
 from collections import defaultdict
 
@@ -50,7 +51,6 @@ class Template(object):
         self._name = name
         self._pattern = pattern
         self._anchor = anchor
-        self._placeholderCount = defaultdict(int)
         self._regex = self._construct_regular_expression(self.pattern)
         self._format_specification = self._construct_format_specification(
             self.pattern
@@ -191,7 +191,9 @@ class Template(object):
         # Replace placeholders with regex pattern.
         expression = re.sub(
             r'{(?P<placeholder>.+?)(:(?P<expression>(\\}|.)+?))?}',
-            self._convert,
+            functools.partial(
+                self._convert, placeholder_count=defaultdict(int)
+            ),
             expression
         )
 
@@ -219,8 +221,13 @@ class Template(object):
 
         return compiled
 
-    def _convert(self, match):
-        '''Return a regular expression to represent *match*.'''
+    def _convert(self, match, placeholder_count):
+        '''Return a regular expression to represent *match*.
+
+        *placeholder_count* should be a `defaultdict(int)` that will be used to
+        store counts of unique placeholder names.
+
+        '''
         placeholder_name = match.group('placeholder')
 
         # Support period (.) as nested key indicator. Currently, a period is
@@ -232,9 +239,9 @@ class Template(object):
         # The re module does not support duplicate group names. To support
         # duplicate placeholder names in templates add a unique count to the
         # regular expression group name and strip it later during parse.
-        self._placeholderCount[placeholder_name] += 1
+        placeholder_count[placeholder_name] += 1
         placeholder_name += '{0:03d}'.format(
-            self._placeholderCount[placeholder_name]
+            placeholder_count[placeholder_name]
         )
 
         expression = match.group('expression')
