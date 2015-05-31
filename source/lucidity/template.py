@@ -261,3 +261,25 @@ class Template(object):
 
         return groups['placeholder']
 
+
+class Resolver(object):
+    '''Template resolver interface.'''
+
+    __metaclass__ = abc.ABCMeta
+
+    @abc.abstractmethod
+    def get(self, template_name, default=None):
+        '''Return template that matches *template_name*.
+
+        If no template matches then return *default*.
+
+        '''
+        return default
+
+    @classmethod
+    def __subclasshook__(cls, subclass):
+        '''Return whether *subclass* fulfils this interface.'''
+        if cls is Resolver:
+            return callable(getattr(subclass, 'get', None))
+
+        return NotImplemented
