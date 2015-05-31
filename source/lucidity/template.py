@@ -206,7 +206,10 @@ class Template(object):
         try:
             compiled = re.compile(expression)
         except re.error as error:
-            if 'bad group name' in error:
+            if any([
+                'bad group name' in str(error),
+                'bad character in group name' in str(error)
+            ]):
                 raise ValueError('Placeholder name contains invalid '
                                  'characters.')
             else:
