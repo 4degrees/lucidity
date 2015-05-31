@@ -311,6 +311,26 @@ def test_keys_mutable_side_effect():
     assert placeholders_b == set(['variable'])
 
 
+@pytest.mark.parametrize(('pattern', 'expected'), [
+    ('/static/string', []),
+    ('/single/{variable}', []),
+    ('/single/{@reference}', ['reference']),
+    ('/{@reference}/{@reference}', ['reference']),
+    ('/{@a.b.c}', ['a.b.c'])
+], ids=[
+    'static string',
+    'single variable',
+    'single reference',
+    'duplicate reference',
+    'structured reference'
+])
+def test_references(pattern, expected):
+    '''Get template references in pattern.'''
+    template = Template('test', pattern)
+    references = template.references()
+    assert sorted(references) == sorted(expected)
+
+
 @pytest.mark.parametrize(('instance', 'expected'), [
     (ResolverFixture(), True),
     ({}, True),

@@ -202,6 +202,12 @@ class Template(object):
         )
         return set(self._PLAIN_PLACEHOLDER_REGEX.findall(format_specification))
 
+    def references(self):
+        '''Return unique set of referenced templates in pattern.'''
+        format_specification = self._construct_format_specification(
+            self.pattern
+        )
+        return set(self._TEMPLATE_REFERENCE_REGEX.findall(format_specification))
 
     def _construct_format_specification(self, pattern):
         '''Return format specification from *pattern*.'''
