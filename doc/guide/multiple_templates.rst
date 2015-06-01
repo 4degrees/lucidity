@@ -13,6 +13,8 @@ Representing different path structures requires the use of multiple templates.
 
 Lucidity provides a few helper functions for dealing with multiple templates.
 
+.. _multiple_templates/discovery:
+
 Template Discovery
 ------------------
 
