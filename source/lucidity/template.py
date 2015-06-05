@@ -47,7 +47,8 @@ class Template(object):
 
         If *template_resolver* is supplied, use it to resolve any template
         references in the *pattern* during operations. It should conform to the
-        :class:`Resolver` interface.
+        :class:`Resolver` interface. It can be changed at any time on the
+        instance to affect future operations.
 
         '''
         super(Template, self).__init__()
