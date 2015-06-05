@@ -192,7 +192,7 @@ name::
 Custom Regular Expressions
 --------------------------
 
-Lucidity works by constucting a regular expression from a pattern. It replaces
+Lucidity works by constructing a regular expression from a pattern. It replaces
 all placeholders with a default regular expression that should suit most cases.
 
 However, if you need to customise the regular expression you can do so either
