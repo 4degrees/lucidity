@@ -15,3 +15,4 @@ Overview and examples of using the system in practice.
     installation
     tutorial
     multiple_templates
+    template_references

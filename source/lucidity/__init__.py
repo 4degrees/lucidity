@@ -7,7 +7,7 @@ import uuid
 import imp
 
 from ._version import __version__
-from .template import Template
+from .template import Template, Resolver
 from .error import ParseError, FormatError, NotFound
 
 

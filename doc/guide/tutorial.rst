@@ -105,6 +105,8 @@ behaviour is not desirable then the *duplicate_placeholder_mode* of any
     *duplicate_placeholder_mode* can also be passed as an argument when
     constructing a template.
 
+.. _tutorial/anchoring:
+
 Anchoring
 ^^^^^^^^^
 
@@ -190,7 +192,7 @@ name::
 Custom Regular Expressions
 --------------------------
 
-Lucidity works by constucting a regular expression from a pattern. It replaces
+Lucidity works by constructing a regular expression from a pattern. It replaces
 all placeholders with a default regular expression that should suit most cases.
 
 However, if you need to customise the regular expression you can do so either
@@ -226,4 +228,4 @@ And of course, any custom expression text is omitted when formatting data::
 
     >>> print template.format({'version': '001'})
     file_v001.ext
-    
+
