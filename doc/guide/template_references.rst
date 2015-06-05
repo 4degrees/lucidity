@@ -78,3 +78,24 @@ manually call the :meth:`Template.expanded_pattern` method at any time::
     >>> print shot_path.expanded_pattern()
     /jobs/{job.code}/shots/{shot.code}
 
+Anchor behaviour
+----------------
+
+A :class:`Template` has an :ref:`anchor <tutorial/anchoring>` setting that
+determines how the template pattern is matched when parsing. When a template is
+referenced in another template its anchor setting is ignored and only the anchor
+setting of the outermost template is used:
+
+    >>> template_a = lucidity.Template(
+    ...     'a', 'path/{variable}', anchor=lucidity.Template.ANCHOR_START
+    ... )
+    >>> print template_a.parse('/some/path/value')
+    ParseError: Path '/some/path/value' did not match template pattern.
+    >>> resolver = {}
+    >>> resolver[template_a.name] = template_a
+    >>> template_b = lucidity.Template(
+    ...     'b', '{@a}', anchor=lucidity.Template.ANCHOR_END,
+    ...     template_resolver=resolver
+    ... )
+    >>> print template_b.parse('/some/path/value')
+    {'variable': 'value'}

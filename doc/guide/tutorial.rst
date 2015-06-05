@@ -105,6 +105,8 @@ behaviour is not desirable then the *duplicate_placeholder_mode* of any
     *duplicate_placeholder_mode* can also be passed as an argument when
     constructing a template.
 
+.. _tutorial/anchoring:
+
 Anchoring
 ^^^^^^^^^
 
@@ -226,4 +228,4 @@ And of course, any custom expression text is omitted when formatting data::
 
     >>> print template.format({'version': '001'})
     file_v001.ext
-    
+
