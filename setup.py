@@ -35,6 +35,23 @@ with open(os.path.join(
     ).group(1)
 
 
+# Requirements.
+setup_requires = [
+    'sphinx >= 1.3, < 2',
+    'lowdown >= 0.1.1, < 2'
+]
+
+install_requires = [
+
+]
+
+# Readthedocs requires Sphinx extensions to be specified as part of
+# install_requires in order to build properly.
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if on_rtd:
+    install_requires.extend(setup_requires)
+
+
 setup(
     name='Lucidity',
     version=_version,
@@ -51,12 +68,8 @@ setup(
     package_dir={
         '': 'source'
     },
-    setup_requires=[
-        'sphinx >= 1.3, < 2',
-        'lowdown >= 0.1.1, < 2'
-    ],
-    install_requires=[
-    ],
+    setup_requires=setup_requires,
+    install_requires=install_requires,
     tests_require=[
         'pytest >= 2.3.5'
     ],
