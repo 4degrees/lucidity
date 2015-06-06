@@ -11,7 +11,8 @@ Release Notes
 .. currentmodule:: lucidity.template
 
 
-.. release:: next
+.. release:: 1.5.0
+    :date: 2015-06-06
 
     .. change:: new
 
