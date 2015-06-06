@@ -13,6 +13,7 @@ Filesystem templating and management.
 
     guide/index
     reference/index
+    release/index
     glossary
 
 ******************

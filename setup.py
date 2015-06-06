@@ -51,9 +51,15 @@ setup(
     package_dir={
         '': 'source'
     },
+    setup_requires=setup_requires + [
+        'sphinx >= 1.3, < 2',
+        'lowdown >= 0.1.1, < 2'
+    ],
     install_requires=[
     ],
-    tests_require=['pytest >= 2.3.5'],
+    tests_require=[
+        'pytest >= 2.3.5'
+    ],
     cmdclass={
         'test': PyTest
     },
