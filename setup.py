@@ -51,7 +51,7 @@ setup(
     package_dir={
         '': 'source'
     },
-    setup_requires=setup_requires + [
+    setup_requires=[
         'sphinx >= 1.3, < 2',
         'lowdown >= 0.1.1, < 2'
     ],
