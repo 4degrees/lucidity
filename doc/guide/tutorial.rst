@@ -78,6 +78,8 @@ If a template's pattern does not match the path then
     >>> print template.parse('/other/monty/assets')
     ParseError: Input '/other/monty/assets' did not match template pattern.
 
+.. _tutorial/parsing/handling_duplicate_placeholders:
+
 Handling Duplicate Placeholders
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
