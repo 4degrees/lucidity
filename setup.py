@@ -58,7 +58,7 @@ setup(
     description='Filesystem templating and management.',
     long_description=open('README.rst').read(),
     keywords='filesystem, management, templating',
-    url='https://github.com/4degrees/lucidity',
+    url='https://gitlab.com/4degrees/lucidity',
     author='Martin Pengelly-Phillips',
     author_email='martin@4degrees.ltd.uk',
     license='Apache License (2.0)',

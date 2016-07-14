@@ -18,16 +18,16 @@ of the mirrors::
 
     $ pip install --use-mirrors lucidity
 
-Alternatively, you may wish to download manually from Github where Lucidity
-is `actively developed <https://github.com/4degrees/lucidity>`_.
+Alternatively, you may wish to download manually from Gitlab where Lucidity
+is `actively developed <https://gitlab.com/4degrees/lucidity>`_.
 
 You can clone the public repository::
 
-    $ git clone git://github.com/4degrees/lucidity.git
+    $ git clone git@gitlab.com:4degrees/lucidity.git
 
 Or download an appropriate
-`tarball <https://github.com/4degrees/lucidity/tarball/master>`_ or
-`zipball <https://github.com/4degrees/lucidity/zipball/master>`_
+`zipball
+<https://gitlab.com/4degrees/lucidity/repository/archive.zip?ref=master>`_
 
 Once you have a copy of the source, you can embed it in your Python package,
 or install it into your site-packages::
