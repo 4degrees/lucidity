@@ -10,6 +10,13 @@ Release Notes
 
 .. currentmodule:: lucidity.template
 
+.. release:: Upcoming
+
+    .. change:: fixed
+
+        Specify dependencies using case sensitive names to support systems that
+        cannot resolve in a case insensitive manner (such as `"Nexus Repository"
+        <https://issues.sonatype.org/browse/NEXUS-12075>`__).
 
 .. release:: 1.5.0
     :date: 2015-06-06
