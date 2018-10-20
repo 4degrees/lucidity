@@ -37,8 +37,8 @@ with open(os.path.join(
 
 # Requirements.
 setup_requires = [
-    'sphinx >= 1.3, < 2',
-    'lowdown >= 0.1.1, < 2'
+    'Sphinx >= 1.3, < 2',
+    'Lowdown >= 0.1.1, < 2'
 ]
 
 install_requires = [
