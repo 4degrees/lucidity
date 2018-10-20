@@ -10,7 +10,8 @@ Release Notes
 
 .. currentmodule:: lucidity.template
 
-.. release:: Upcoming
+.. release:: 1.5.1
+    :date: 2018-10-20
 
     .. change:: fixed
 
